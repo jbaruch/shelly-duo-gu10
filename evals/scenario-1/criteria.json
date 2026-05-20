@@ -1,0 +1,61 @@
+{
+  "context": "Tests whether the agent correctly implements mDNS discovery for Shelly color bulbs on a JVM using JmDNS, including the critical non-loopback IPv4 bind requirement, correct interface filtering, service-name prefix filtering, and proper resource cleanup.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "JmDNS library used",
+      "description": "Uses javax.jmdns.JmDNS for mDNS discovery — not Avahi, jmDNS alternatives, or a raw multicast socket implementation",
+      "max_score": 10
+    },
+    {
+      "name": "Explicit InetAddress bind",
+      "description": "JmDNS.create() is called with an explicit InetAddress argument — does NOT use the no-argument JmDNS.create() form",
+      "max_score": 15
+    },
+    {
+      "name": "Interface up/physical filter",
+      "description": "NetworkInterface enumeration filters to interfaces that are isUp AND NOT isLoopback AND NOT isVirtual",
+      "max_score": 10
+    },
+    {
+      "name": "Utun interface exclusion",
+      "description": "Excludes network interfaces whose displayName starts with \"utun\" (VPN tunnel interfaces)",
+      "max_score": 10
+    },
+    {
+      "name": "IPv4-only address filter",
+      "description": "Filters InetAddress to non-loopback IPv4 addresses only: checks !isLoopbackAddress AND address length == 4 (or equivalent IPv4 check)",
+      "max_score": 10
+    },
+    {
+      "name": "Correct mDNS service type",
+      "description": "Queries the mDNS service type \"_http._tcp.local.\" (not \"_shelly._tcp.local.\" or any other type)",
+      "max_score": 8
+    },
+    {
+      "name": "shellycolorbulb- prefix filter",
+      "description": "Filters discovered services to those whose name starts with \"shellycolorbulb-\"",
+      "max_score": 8
+    },
+    {
+      "name": "shellybulbduo- prefix filter",
+      "description": "Also filters for services whose name starts with \"shellybulbduo-\" (not just shellycolorbulb-)",
+      "max_score": 8
+    },
+    {
+      "name": "JmDNS dependency version",
+      "description": "build.gradle.kts includes org.jmdns:jmdns:3.6.0 (exact version 3.6.0)",
+      "max_score": 8
+    },
+    {
+      "name": "JmDNS closed after use",
+      "description": "jmdns.close() is called after listing services to release the multicast socket",
+      "max_score": 8
+    },
+    {
+      "name": "Returns IP strings",
+      "description": "The discovery function returns a list of IP address strings (hostAddress values), not ServiceInfo objects or other types",
+      "max_score": 5
+    }
+  ]
+}

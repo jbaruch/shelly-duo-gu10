@@ -1,0 +1,61 @@
+{
+  "context": "Tests whether the agent correctly implements the Shelly Duo GU10 LAN HTTP API contract in Kotlin using Ktor, covering endpoint paths, query parameter names, HTTP method, off semantics, status probing, and clean shutdown behavior.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Ktor CIO engine",
+      "description": "Uses HttpClient(CIO) — the Ktor CIO engine — not OkHttp, Apache, or another engine",
+      "max_score": 10
+    },
+    {
+      "name": "Plain HTTP",
+      "description": "Base URL uses http:// (not https://) when constructing requests to the bulb",
+      "max_score": 8
+    },
+    {
+      "name": "Color endpoint path",
+      "description": "Color commands use /color/0 as the request path (not /light/0, /rgb, or any other path)",
+      "max_score": 8
+    },
+    {
+      "name": "Color query parameters",
+      "description": "Color calls include all of: turn, red, green, blue, and gain as query parameters",
+      "max_score": 10
+    },
+    {
+      "name": "White endpoint path",
+      "description": "White/temperature commands use /white/0 as the request path",
+      "max_score": 8
+    },
+    {
+      "name": "White query parameters",
+      "description": "White/temperature calls include all of: turn, temp, and brightness as query parameters",
+      "max_score": 8
+    },
+    {
+      "name": "Off via turn=off",
+      "description": "Turning the bulb off uses the turn=off parameter — does NOT set red=0, green=0, blue=0 to achieve off",
+      "max_score": 10
+    },
+    {
+      "name": "Status endpoint",
+      "description": "Reachability / health probe uses /status endpoint (not /ping or /health or another path)",
+      "max_score": 8
+    },
+    {
+      "name": "Reachability timeout",
+      "description": "The isReachable or equivalent function applies a timeout (e.g., withTimeout or similar) to the status probe",
+      "max_score": 10
+    },
+    {
+      "name": "Shutdown hook",
+      "description": "Registers a JVM shutdown hook (Runtime.getRuntime().addShutdownHook or equivalent) that turns the bulb off when the process exits",
+      "max_score": 10
+    },
+    {
+      "name": "HTTP GET method",
+      "description": "All API calls (color, white, off, status) use HTTP GET, not POST or PUT",
+      "max_score": 10
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "context": "Tests whether the agent uses the correct LAN-appropriate rate-limiting interval for Shelly hardware (not the cloud API interval), handles color/white mode transitions without stale state, reads IP from environment, and implements clean shutdown.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "0.2s min-interval",
+      "description": "The rate-limiting or debounce minimum interval is set to 0.2 seconds (200ms) or less — visible as a numeric constant or field in the code",
+      "max_score": 15
+    },
+    {
+      "name": "Not 1.2s interval",
+      "description": "Does NOT use 1.2 seconds (1200ms) as the rate-limiting interval — the cloud-API debounce value is absent from the code",
+      "max_score": 10
+    },
+    {
+      "name": "Mode transition reset",
+      "description": "When switching from white mode to color mode, makes an explicit color endpoint call to reset before applying the new color (does not assume the previous color mode state is still active)",
+      "max_score": 15
+    },
+    {
+      "name": "turn=off for shutdown",
+      "description": "Uses turn=off to turn the bulb off — does NOT set red=0, green=0, blue=0 as an off mechanism",
+      "max_score": 10
+    },
+    {
+      "name": "JVM shutdown hook",
+      "description": "Registers a JVM shutdown hook (Runtime.getRuntime().addShutdownHook or equivalent) that turns the bulb off when the process exits",
+      "max_score": 10
+    },
+    {
+      "name": "SHELLY_BULB_IP env var",
+      "description": "Reads the bulb IP address from the SHELLY_BULB_IP environment variable (exact variable name)",
+      "max_score": 12
+    },
+    {
+      "name": "Fallback IP",
+      "description": "Provides a hardcoded fallback IP address when SHELLY_BULB_IP is not set (not crashing or returning null)",
+      "max_score": 8
+    },
+    {
+      "name": "Plain HTTP",
+      "description": "API calls to the bulb use http:// (not https://)",
+      "max_score": 8
+    },
+    {
+      "name": "Color params in color mode",
+      "description": "Color mode commands use red, green, blue, and gain query parameters (not brightness for color mode)",
+      "max_score": 6
+    },
+    {
+      "name": "White params in white mode",
+      "description": "White mode commands use temp and brightness query parameters (not gain for white mode)",
+      "max_score": 6
+    }
+  ]
+}
